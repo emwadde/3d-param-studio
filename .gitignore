@@ -10,6 +10,9 @@ node_modules/
 /out
 /.cache
 
+# Python venv
+.venv/
+
 # Environment files
 .env
 .env.local
