@@ -1,0 +1,44 @@
+{
+  "_comment": "Open-front carcass box. Sides run full height and depth; top and bottom sit between the sides and run full depth; back is inset on all four edges and flush at the rear. Centered on x and z, floor at y=0, front is +z, unit mm.",
+  "schemaVersion": "1.0",
+  "unit": "mm",
+  "meta": { "id": "carcass-box", "name": "Carcass Box" },
+
+  "parameters": {
+    "width":         { "type": "number", "default": 800, "min": 300, "max": 2400 },
+    "height":        { "type": "number", "default": 720, "min": 200, "max": 2400 },
+    "depth":         { "type": "number", "default": 560, "min": 200, "max": 800 },
+    "thickness":     { "type": "number", "default": 18,  "min": 12,  "max": 30 },
+    "backThickness": { "type": "number", "default": 18,  "min": 3,   "max": 30 }
+  },
+
+  "materials": {
+    "melamine": { "color": "#e6e2da", "roughness": 0.6 }
+  },
+
+  "root": {
+    "type": "group",
+    "name": "CarcassBox",
+    "variables": {
+      "innerWidth":  "width - 2 * thickness",
+      "innerHeight": "height - 2 * thickness"
+    },
+    "children": [
+      { "type": "element", "shape": "box", "name": "LeftSide", "material": "melamine",
+        "transform": { "position": { "x": "-width / 2 + thickness / 2", "y": "height / 2", "z": 0 } },
+        "geometry": { "width": "thickness", "height": "height", "depth": "depth" } },
+      { "type": "element", "shape": "box", "name": "RightSide", "material": "melamine",
+        "transform": { "position": { "x": "width / 2 - thickness / 2", "y": "height / 2", "z": 0 } },
+        "geometry": { "width": "thickness", "height": "height", "depth": "depth" } },
+      { "type": "element", "shape": "box", "name": "Bottom", "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "thickness / 2", "z": 0 } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "depth" } },
+      { "type": "element", "shape": "box", "name": "Top", "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "height - thickness / 2", "z": 0 } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "depth" } },
+      { "type": "element", "shape": "box", "name": "Back", "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "height / 2", "z": "-depth / 2 + backThickness / 2" } },
+        "geometry": { "width": "innerWidth", "height": "innerHeight", "depth": "backThickness" } }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "3d-param-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/vendor.js",
+    "vendor": "node scripts/vendor.js",
+    "dev:api": "uvicorn server.main:app --reload --port 8000",
+    "dev:web": "vite",
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "build": "vite build",
+    "start": "uvicorn server.main:app --port 3000"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.4",
+    "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "mathjs": "^15.2.0",
+    "three": "^0.159.0"
+  }
+}

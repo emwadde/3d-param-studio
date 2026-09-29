@@ -1,0 +1,44 @@
+{
+  "_comment": "Single flat panel with a round hole in the center. Panel stands with its 200 mm width along x, 400 mm length along y (base on the floor) and its thickness along z. Unit mm.",
+  "schemaVersion": "1.0",
+  "unit": "mm",
+  "meta": { "id": "panel-with-hole", "name": "Panel With Hole" },
+
+  "parameters": {
+    "panelWidth":   { "type": "number", "default": 200, "min": 60,  "max": 1200 },
+    "panelLength":  { "type": "number", "default": 400, "min": 100, "max": 2400 },
+    "thickness":    { "type": "number", "default": 18,  "min": 6,   "max": 40 },
+    "holeDiameter": { "type": "number", "default": 36,  "min": 5,   "max": 50 }
+  },
+
+  "materials": {
+    "melamine": { "color": "#e6e2da", "roughness": 0.6 }
+  },
+
+  "root": {
+    "type": "group",
+    "name": "PanelWithHole",
+    "children": [
+      {
+        "type": "element",
+        "shape": "extrude",
+        "name": "Panel",
+        "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "panelLength / 2", "z": 0 } },
+        "geometry": {
+          "_comment": "Outline is a list of [x, y] points; a hole is a point list or a {circle} (segments default 24). Extrusion depth is the thickness, centered on z.",
+          "outline": [
+            ["-panelWidth / 2", "-panelLength / 2"],
+            ["panelWidth / 2", "-panelLength / 2"],
+            ["panelWidth / 2", "panelLength / 2"],
+            ["-panelWidth / 2", "panelLength / 2"]
+          ],
+          "holes": [
+            { "circle": { "x": 0, "y": 0, "radius": "holeDiameter / 2", "segments": 24 } }
+          ],
+          "depth": "thickness"
+        }
+      }
+    ]
+  }
+}

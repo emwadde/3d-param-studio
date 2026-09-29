@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3D Param Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="/src/css/style.css">
+<link rel="stylesheet" href="/src/css/studio.css">
+</head>
+<body>
+<div id="app">
+  <div id="stage"><canvas id="c"></canvas>
+    <div id="tools" role="toolbar" aria-label="View tools">
+      <a id="back" href="/" title="Back to catalogue">←</a>
+      <button data-tool="orbit" aria-pressed="true">Orbit</button>
+      <button data-tool="pan" aria-pressed="false">Pan</button>
+      <button id="reset">Reset view</button>
+    </div>
+    <div id="hint">Drag to orbit. Middle/right-drag, Shift+drag or the Pan tool to pan. Scroll or pinch to zoom.</div>
+  </div>
+  <aside id="panel">
+    <h1 id="title">Loading…</h1>
+    <p class="sub" id="subtitle"></p>
+    <div id="controls"></div>
+    <div id="err"></div>
+    <button id="export" disabled>Export COLLADA (.dae)</button>
+    <div id="info"></div>
+  </aside>
+</div>
+<script src="/vendor/three.min.js"></script>
+<script src="/vendor/math.js"></script>
+<script type="module" src="/src/js/studio.js"></script>
+</body>
+</html>

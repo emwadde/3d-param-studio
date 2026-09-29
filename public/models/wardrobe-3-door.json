@@ -1,0 +1,112 @@
+{
+  "_comment": "3-door wardrobe. Overall size (doors closed) is width x depth x height, including the 3 mm back and the doors. Hanging rail section on the left, shelf compartments on the right, plinth at the base, back panel fitted from the outside over the side edges, three overlay doors on hinges. Centered on x and z, floor at y=0, front is +z. Unit mm. Assumed, not taken from drawings: plinth height and set-back, divider position, rail height, shelf count, door gaps.",
+  "schemaVersion": "1.0",
+  "unit": "mm",
+  "meta": { "id": "wardrobe-3-door", "name": "Wardrobe 3 Door" },
+
+  "parameters": {
+    "width":         { "type": "number", "default": 1170, "min": 600, "max": 2400 },
+    "height":        { "type": "number", "default": 1760, "min": 1200, "max": 2400 },
+    "depth":         { "type": "number", "default": 550,  "min": 350, "max": 700 },
+    "thickness":     { "type": "number", "default": 18,   "min": 16,  "max": 25 },
+    "backThickness": { "type": "number", "default": 3,    "min": 3,   "max": 9 },
+    "plinthHeight":  { "type": "number", "default": 100,  "min": 50,  "max": 150 },
+    "hangingDoors":  { "type": "number", "default": 2,    "min": 1,   "max": 2 },
+    "shelfCount":    { "type": "number", "default": 4,    "min": 0,   "max": 10 },
+    "railDrop":      { "type": "number", "default": 70,   "min": 30,  "max": 200 },
+    "doorOpenAngle": { "type": "number", "default": 35,   "min": 0,   "max": 110 }
+  },
+
+  "materials": {
+    "carcass": { "color": "#e8e2d6", "roughness": 0.6 },
+    "back":    { "color": "#d8d0c0", "roughness": 0.8 },
+    "door":    { "color": "#b9a382", "roughness": 0.55 },
+    "metal":   { "color": "#a9aeb3", "roughness": 0.35, "metalness": 0.7 }
+  },
+
+  "root": {
+    "type": "group",
+    "name": "Wardrobe3Door",
+    "variables": {
+      "innerWidth": "width - 2 * thickness",
+      "doorThickness": "thickness",
+      "doorClearance": 2,
+      "doorGap": 2,
+      "plinthSetback": 40,
+      "railRadius": 12.5,
+      "zFront": "depth / 2 - doorThickness - doorClearance",
+      "zBack": "-depth / 2 + backThickness",
+      "zMid": "(zFront + zBack) / 2",
+      "carcassDepth": "zFront - zBack",
+      "innerBottom": "plinthHeight + thickness",
+      "innerTop": "height - thickness",
+      "dividerX": "-width / 2 + hangingDoors * width / 3",
+      "shelfWidth": "width / 2 - thickness - (dividerX + thickness / 2)",
+      "shelfX": "((dividerX + thickness / 2) + (width / 2 - thickness)) / 2",
+      "shelfGap": "(innerTop - innerBottom - shelfCount * thickness) / (shelfCount + 1)",
+      "railLength": "(dividerX - thickness / 2) - (-width / 2 + thickness)",
+      "railX": "((dividerX - thickness / 2) + (-width / 2 + thickness)) / 2",
+      "railY": "innerTop - railDrop",
+      "doorWidth": "(width - 4 * doorGap) / 3",
+      "doorHeight": "height - plinthHeight - 2 * doorGap",
+      "doorY": "plinthHeight + doorGap + doorHeight / 2"
+    },
+    "children": [
+      { "type": "element", "shape": "box", "name": "LeftSide", "material": "carcass",
+        "transform": { "position": { "x": "-width / 2 + thickness / 2", "y": "height / 2", "z": "zMid" } },
+        "geometry": { "width": "thickness", "height": "height", "depth": "carcassDepth" } },
+      { "type": "element", "shape": "box", "name": "RightSide", "material": "carcass",
+        "transform": { "position": { "x": "width / 2 - thickness / 2", "y": "height / 2", "z": "zMid" } },
+        "geometry": { "width": "thickness", "height": "height", "depth": "carcassDepth" } },
+      { "type": "element", "shape": "box", "name": "Bottom", "material": "carcass",
+        "transform": { "position": { "x": 0, "y": "plinthHeight + thickness / 2", "z": "zMid" } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "carcassDepth" } },
+      { "type": "element", "shape": "box", "name": "Top", "material": "carcass",
+        "transform": { "position": { "x": 0, "y": "height - thickness / 2", "z": "zMid" } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "carcassDepth" } },
+      { "type": "element", "shape": "box", "name": "Divider", "material": "carcass",
+        "transform": { "position": { "x": "dividerX", "y": "(innerBottom + innerTop) / 2", "z": "zMid" } },
+        "geometry": { "width": "thickness", "height": "innerTop - innerBottom", "depth": "carcassDepth" } },
+      { "type": "element", "shape": "box", "name": "Back", "material": "back",
+        "transform": { "position": { "x": 0, "y": "height / 2", "z": "-depth / 2 + backThickness / 2" } },
+        "geometry": { "width": "width", "height": "height", "depth": "backThickness" } },
+      { "type": "element", "shape": "box", "name": "Plinth", "material": "carcass",
+        "transform": { "position": { "x": 0, "y": "plinthHeight / 2", "z": "zFront - plinthSetback - thickness / 2" } },
+        "geometry": { "width": "innerWidth", "height": "plinthHeight", "depth": "thickness" } },
+      { "type": "element", "shape": "box", "name": "Shelf", "material": "carcass",
+        "repeat": { "count": "shelfCount", "as": "shelfIndex" },
+        "transform": { "position": { "x": "shelfX", "y": "innerBottom + shelfGap * (shelfIndex + 1) + thickness * shelfIndex + thickness / 2", "z": "zMid" } },
+        "geometry": { "width": "shelfWidth", "height": "thickness", "depth": "carcassDepth" } },
+      { "type": "element", "shape": "extrude", "name": "HangingRail", "material": "metal",
+        "transform": { "position": { "x": "railX", "y": "railY", "z": "zMid" }, "rotation": { "y": 90 } },
+        "geometry": {
+          "_comment": "A round bar: a circle outline extruded along its length, turned 90 degrees so the length runs along x.",
+          "outline": { "circle": { "x": 0, "y": 0, "radius": "railRadius", "segments": 24 } },
+          "depth": "railLength"
+        } },
+
+      { "type": "group", "name": "Door1Hinge",
+        "_comment": "Each door turns about a vertical axis on its front face at the hinge edge. Left door hinged on its left edge, the other two on their right edges, so the doors swing out without touching each other.",
+        "transform": { "position": { "x": "-width / 2 + doorGap", "y": "doorY", "z": "depth / 2" }, "rotation": { "y": "-doorOpenAngle" } },
+        "children": [
+          { "type": "element", "shape": "box", "name": "Door1", "material": "door",
+            "transform": { "position": { "x": "doorWidth / 2", "y": 0, "z": "-doorThickness / 2" } },
+            "geometry": { "width": "doorWidth", "height": "doorHeight", "depth": "doorThickness" } }
+        ] },
+      { "type": "group", "name": "Door2Hinge",
+        "transform": { "position": { "x": "-width / 2 + 2 * doorGap + 2 * doorWidth", "y": "doorY", "z": "depth / 2" }, "rotation": { "y": "doorOpenAngle" } },
+        "children": [
+          { "type": "element", "shape": "box", "name": "Door2", "material": "door",
+            "transform": { "position": { "x": "-doorWidth / 2", "y": 0, "z": "-doorThickness / 2" } },
+            "geometry": { "width": "doorWidth", "height": "doorHeight", "depth": "doorThickness" } }
+        ] },
+      { "type": "group", "name": "Door3Hinge",
+        "transform": { "position": { "x": "width / 2 - doorGap", "y": "doorY", "z": "depth / 2" }, "rotation": { "y": "doorOpenAngle" } },
+        "children": [
+          { "type": "element", "shape": "box", "name": "Door3", "material": "door",
+            "transform": { "position": { "x": "-doorWidth / 2", "y": 0, "z": "-doorThickness / 2" } },
+            "geometry": { "width": "doorWidth", "height": "doorHeight", "depth": "doorThickness" } }
+        ] }
+    ]
+  }
+}

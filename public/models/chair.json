@@ -1,0 +1,98 @@
+{
+  "_comment": "Simple chair. Numbers are literals, strings are mathjs formulas. Floor at y=0, front is +z, unit mm.",
+  "schemaVersion": "1.0",
+  "unit": "mm",
+  "meta": { "id": "chair-simple", "name": "Simple Chair" },
+
+  "parameters": {
+    "seatWidth":     { "type": "number", "default": 420, "min": 300, "max": 600 },
+    "seatDepth":     { "type": "number", "default": 400, "min": 300, "max": 550 },
+    "seatHeight":    { "type": "number", "default": 450, "min": 300, "max": 650 },
+    "seatThickness": { "type": "number", "default": 40,  "min": 20,  "max": 80 },
+    "backHeight":    { "type": "number", "default": 380, "min": 200, "max": 700 },
+    "hasBackrest":   { "type": "boolean", "default": true },
+    "seatMaterial":  { "type": "enum", "options": ["fabric", "leather"], "default": "fabric" }
+  },
+
+  "materials": {
+    "wood":    { "color": "#b98b5a", "roughness": 0.7 },
+    "fabric":  { "color": "#7a6a58", "roughness": 0.9 },
+    "leather": { "color": "#4a2c1c", "roughness": 0.3 }
+  },
+
+  "root": {
+    "type": "group",
+    "name": "Chair",
+    "variables": {
+      "legHeight": "seatHeight - seatThickness",
+      "backWidth": "seatWidth * 0.9",
+      "frontLegX": "seatWidth / 2 - 40",
+      "backLegX":  "backWidth / 2 - 40",
+      "legZ":      "seatDepth / 2 - 40",
+      "upholstery": "seatMaterial == SeatMaterial.leather ? \"leather\" : \"fabric\""
+    },
+    "children": [
+      {
+        "type": "element",
+        "shape": "extrude",
+        "name": "Seat",
+        "material": "upholstery",
+        "transform": {
+          "position": { "x": 0, "y": "seatHeight - seatThickness / 2", "z": 0 },
+          "rotation": { "x": 90 }
+        },
+        "geometry": {
+          "_comment": "Outline is [x, y] in the extrusion plane; y becomes depth (+z = front) after the 90deg rotation. Extrusion is centered on its own depth axis.",
+          "outline": [
+            ["-backWidth / 2", "-seatDepth / 2"],
+            ["backWidth / 2", "-seatDepth / 2"],
+            ["seatWidth / 2", "seatDepth / 2"],
+            ["-seatWidth / 2", "seatDepth / 2"]
+          ],
+          "depth": "seatThickness"
+        }
+      },
+      {
+        "type": "group",
+        "name": "Legs",
+        "children": [
+          { "type": "element", "shape": "cylinder", "name": "LegFrontLeft", "material": "wood",
+            "transform": { "position": { "x": "-frontLegX", "y": "legHeight / 2", "z": "legZ" } },
+            "geometry": { "radiusTop": 22, "radiusBottom": 14, "height": "legHeight" } },
+          { "type": "element", "shape": "cylinder", "name": "LegFrontRight", "material": "wood",
+            "transform": { "position": { "x": "frontLegX", "y": "legHeight / 2", "z": "legZ" } },
+            "geometry": { "radiusTop": 22, "radiusBottom": 14, "height": "legHeight" } },
+          { "type": "element", "shape": "cylinder", "name": "LegBackLeft", "material": "wood",
+            "transform": { "position": { "x": "-backLegX", "y": "legHeight / 2", "z": "-legZ" } },
+            "geometry": { "radiusTop": 22, "radiusBottom": 14, "height": "legHeight" } },
+          { "type": "element", "shape": "cylinder", "name": "LegBackRight", "material": "wood",
+            "transform": { "position": { "x": "backLegX", "y": "legHeight / 2", "z": "-legZ" } },
+            "geometry": { "radiusTop": 22, "radiusBottom": 14, "height": "legHeight" } }
+        ]
+      },
+      {
+        "type": "group",
+        "name": "BackFrame",
+        "visible": "hasBackrest",
+        "children": [
+          { "type": "element", "shape": "lathe", "name": "PostLeft", "material": "wood",
+            "transform": { "position": { "x": "-backLegX", "y": "seatHeight", "z": "-legZ" } },
+            "geometry": {
+              "_comment": "Profile is [radius, y], revolved around the y axis, not auto-centered. Zero-radius end points close the solid.",
+              "profile": [[0, 0], [14, 0], [18, "backHeight * 0.15"], [12, "backHeight * 0.5"], [16, "backHeight * 0.9"], [10, "backHeight"], [0, "backHeight"]],
+              "segments": 24
+            } },
+          { "type": "element", "shape": "lathe", "name": "PostRight", "material": "wood",
+            "transform": { "position": { "x": "backLegX", "y": "seatHeight", "z": "-legZ" } },
+            "geometry": {
+              "profile": [[0, 0], [14, 0], [18, "backHeight * 0.15"], [12, "backHeight * 0.5"], [16, "backHeight * 0.9"], [10, "backHeight"], [0, "backHeight"]],
+              "segments": 24
+            } },
+          { "type": "element", "shape": "box", "name": "BackPanel", "material": "upholstery",
+            "transform": { "position": { "x": 0, "y": "seatHeight + backHeight - 100", "z": "-legZ" } },
+            "geometry": { "width": "backLegX * 2", "height": 160, "depth": 20 } }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "_comment": "Open shelving unit. Side panels are extruded panels carrying two columns of 5 mm shelf-pin holes on a 32 mm grid; the number of shelves and of pin rows follows the parameters. Centered on x and z, floor at y=0, front is +z. Unit mm.",
+  "schemaVersion": "1.0",
+  "unit": "mm",
+  "meta": { "id": "shelving-unit", "name": "Shelving Unit" },
+
+  "parameters": {
+    "width":         { "type": "number", "default": 800,  "min": 300, "max": 1200 },
+    "height":        { "type": "number", "default": 1800, "min": 600, "max": 2400 },
+    "depth":         { "type": "number", "default": 300,  "min": 200, "max": 600 },
+    "thickness":     { "type": "number", "default": 18,   "min": 12,  "max": 30 },
+    "backThickness": { "type": "number", "default": 6,    "min": 3,   "max": 18 },
+    "shelfCount":    { "type": "number", "default": 4,    "min": 0,   "max": 10 }
+  },
+
+  "materials": {
+    "melamine": { "color": "#e6e2da", "roughness": 0.6 }
+  },
+
+  "root": {
+    "type": "group",
+    "name": "ShelvingUnit",
+    "variables": {
+      "innerWidth": "width - 2 * thickness",
+      "shelfGap": "(height - 2 * thickness - shelfCount * thickness) / (shelfCount + 1)",
+      "pinSpacing": 32,
+      "pinEdge": 37,
+      "pinMargin": 100,
+      "pinDiameter": 5,
+      "pinRows": "floor((height - 2 * thickness - 2 * pinMargin) / pinSpacing) + 1"
+    },
+    "children": [
+      {
+        "type": "element", "shape": "extrude", "name": "LeftSide", "material": "melamine",
+        "transform": { "position": { "x": "-width / 2 + thickness / 2", "y": "height / 2", "z": 0 }, "rotation": { "y": 90 } },
+        "geometry": {
+          "_comment": "Outline is depth (u) by height (v); the 90 degree turn about y makes the extrusion (thickness) run along x. Two hole columns, pinEdge from the front and back edges, one hole per pin row.",
+          "outline": [["-depth / 2", "-height / 2"], ["depth / 2", "-height / 2"], ["depth / 2", "height / 2"], ["-depth / 2", "height / 2"]],
+          "holes": [
+            { "circle": { "x": "depth / 2 - pinEdge", "y": "-height / 2 + thickness + pinMargin + pinRow * pinSpacing", "radius": "pinDiameter / 2", "segments": 12 }, "repeat": { "count": "pinRows", "as": "pinRow" } },
+            { "circle": { "x": "-depth / 2 + pinEdge", "y": "-height / 2 + thickness + pinMargin + pinRow * pinSpacing", "radius": "pinDiameter / 2", "segments": 12 }, "repeat": { "count": "pinRows", "as": "pinRow" } }
+          ],
+          "depth": "thickness"
+        }
+      },
+      {
+        "type": "element", "shape": "extrude", "name": "RightSide", "material": "melamine",
+        "transform": { "position": { "x": "width / 2 - thickness / 2", "y": "height / 2", "z": 0 }, "rotation": { "y": 90 } },
+        "geometry": {
+          "outline": [["-depth / 2", "-height / 2"], ["depth / 2", "-height / 2"], ["depth / 2", "height / 2"], ["-depth / 2", "height / 2"]],
+          "holes": [
+            { "circle": { "x": "depth / 2 - pinEdge", "y": "-height / 2 + thickness + pinMargin + pinRow * pinSpacing", "radius": "pinDiameter / 2", "segments": 12 }, "repeat": { "count": "pinRows", "as": "pinRow" } },
+            { "circle": { "x": "-depth / 2 + pinEdge", "y": "-height / 2 + thickness + pinMargin + pinRow * pinSpacing", "radius": "pinDiameter / 2", "segments": 12 }, "repeat": { "count": "pinRows", "as": "pinRow" } }
+          ],
+          "depth": "thickness"
+        }
+      },
+      { "type": "element", "shape": "box", "name": "Bottom", "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "thickness / 2", "z": 0 } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "depth" } },
+      { "type": "element", "shape": "box", "name": "Top", "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "height - thickness / 2", "z": 0 } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "depth" } },
+      { "type": "element", "shape": "box", "name": "Back", "material": "melamine",
+        "transform": { "position": { "x": 0, "y": "height / 2", "z": "-depth / 2 + backThickness / 2" } },
+        "geometry": { "width": "innerWidth", "height": "height - 2 * thickness", "depth": "backThickness" } },
+      {
+        "type": "element", "shape": "box", "name": "Shelf", "material": "melamine",
+        "repeat": { "count": "shelfCount", "as": "shelfIndex" },
+        "transform": { "position": { "x": 0, "y": "thickness + shelfGap * (shelfIndex + 1) + thickness * shelfIndex + thickness / 2", "z": "backThickness / 2" } },
+        "geometry": { "width": "innerWidth", "height": "thickness", "depth": "depth - backThickness" }
+      }
+    ]
+  }
+}
